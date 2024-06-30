@@ -1,0 +1,51 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "Eloquent javascript",
+      "description": "Best JS book",
+      "categories": [
+        "Javascript",
+        "Programming"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Laravel from scratch",
+      "description": "Best PHP framework book",
+      "categories": [
+        "PHP",
+        "Programming",
+        "Laravel"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "React Basic",
+      "description": "Best JS Library book",
+      "categories": [
+        "React",
+        "Programming",
+        "Javascript"
+      ]
+    },
+    {
+      "title": "Solo leveling",
+      "description": "shadow monarch",
+      "categories": [
+        "fantasty",
+        "action"
+      ],
+      "id": 4
+    },
+    {
+      "title": "book ti",
+      "description": "book des",
+      "categories": [
+        "cate",
+        "book"
+      ],
+      "id": 5
+    }
+  ]
+}
