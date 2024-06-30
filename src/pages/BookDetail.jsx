@@ -1,8 +1,7 @@
 import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import useFetch from '../hooks/useFetch';
-import bookImg from '../assets/book.png';
-import { ThemeContext } from '../contexts/ThemeContext';
+import bookImg from '../assets/book.jpg';
 import useTheme from '../hooks/useTheme';
 
 export default function BookDetail() {
@@ -19,7 +18,7 @@ export default function BookDetail() {
       {book && (
         <div className={`grid grid-cols-2 h-screen ${isDark ? 'text-white' : ''}`}>
           <div>
-            <img src={bookImg} alt="haerin" className="w-[80%]" />
+            <img src={book.photo} alt={book.title} className="w-[80%]" />
           </div>
           <div className="space-y-4">
             <h1 className="text-3xl font-bold">{book.title}</h1>

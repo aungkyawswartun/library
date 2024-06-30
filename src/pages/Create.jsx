@@ -1,50 +1,82 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
-import { ThemeContext } from "../contexts/ThemeContext";
 import useTheme from "../hooks/useTheme";
+import defaultImage from "../assets/book.jpg";
 
 export default function Create() {
-  let [title, setTitle] = useState("");
-  let [description, setDescription] = useState("");
-  let [newCategory, setNewCategory] = useState("");
-  let [categories, setCategories] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [photo, setPhoto] = useState(null); // State for the image file
+  const [base64Image, setBase64Image] = useState(""); // State for Base64 image string
+  const [formError, setFormError] = useState('');
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+  const { setPostData, data: book } = useFetch(
+    "http://localhost:3000/books",
+    "POST"
+  );
+  const { isDark } = useTheme();
 
-  let addCategory = (e) => {
-    if(newCategory && categories.includes(newCategory)) {
-      setNewCategory('')
+  const addCategory = (e) => {
+    if (newCategory && categories.includes(newCategory)) {
+      setNewCategory("");
       return;
     }
-    setCategories(prev => [newCategory, ...prev])
-    setNewCategory('');
-  }
+    setCategories((prev) => [newCategory, ...prev]);
+    setNewCategory("");
+  };
 
-let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POST");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(file); // Set the selected image file
+      convertToBase64(file); // Convert image to Base64
+    }
+  };
 
-  let addBook = (e) => {
+  const convertToBase64 = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setBase64Image(reader.result); // Set Base64 image string
+    };
+    reader.onerror = (error) => {
+      console.error("Error converting image to Base64:", error);
+    };
+  };
+
+  const addBook = (e) => {
     e.preventDefault();
-    let data = {
+    if (!title || !description || categories.length === 0) {
+      setFormError("All fields except photo must be filled");
+      return;
+    }
+    const data = {
       title,
       description,
-      categories
-    }
-    setPostData(data)
-  }
-  useEffect(() => {
-    if(book) {
-      navigate('/')
-    }
-  }, [book])
+      categories,
+      photo: base64Image || defaultImage, // Include Base64 image string
+    };
+    setPostData(data);
+  };
 
-  let {isDark } = useTheme();
+  useEffect(() => {
+    if (book) {
+      navigate("/");
+    }
+  }, [book]);
+
   return (
     <form className="w-full max-w-lg mx-auto mt-3 h-screen" onSubmit={addBook}>
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <label
-            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${isDark ? 'text-white' : ''}`}
+            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${
+              isDark ? "text-white" : ""
+            }`}
             htmlFor="title"
           >
             Book title
@@ -52,7 +84,7 @@ let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POS
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="title"
             type="text"
             placeholder="Book title"
@@ -62,7 +94,9 @@ let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POS
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <label
-            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${isDark ? 'text-white' : ''}`}
+            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${
+              isDark ? "text-white" : ""
+            }`}
             htmlFor="description"
           >
             Book description
@@ -70,9 +104,8 @@ let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POS
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-3xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="description"
-            type="text"
             placeholder="Book description"
           />
           <p className="text-gray-600 text-xs italic">
@@ -83,7 +116,9 @@ let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POS
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <label
-            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${isDark ? 'text-white' : ''}`}
+            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${
+              isDark ? "text-white" : ""
+            }`}
             htmlFor="category"
           >
             Book category
@@ -92,19 +127,23 @@ let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POS
             <input
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               id="category"
               type="text"
               placeholder="Book category"
             />
-            <button type="button" onClick={addCategory} className="bg-primary p-1 text-white rounded-lg mb-3">
+            <button
+              type="button"
+              onClick={addCategory}
+              className="bg-primary p-3 text-white rounded-full mb-3"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-6 p-1"
+                className="size-6"
               >
                 <path
                   strokeLinecap="round"
@@ -126,7 +165,33 @@ let { setPostData , data : book } = useFetch('http://localhost:3000/books', "POS
           ))}
         </div>
       </div>
-      <button className="bg-primary rounded-2xl px-3 py-2 text-white flex items-center gap-1 w-full justify-center">
+      {/* Photo Upload Section */}
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="w-full px-3">
+          <label
+            className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${
+              isDark ? "text-white" : ""
+            }`}
+            htmlFor="photo"
+          >
+            Book photo
+          </label>
+          <input
+            onChange={handleImageChange}
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="photo"
+            type="file"
+            accept="image/*"
+          />
+          {photo && (
+            <p className="text-gray-600 text-xs italic">
+              {`Selected file: ${photo.name}`}
+            </p>
+          )}
+        </div>
+      </div>
+      {formError && <p className="text-red-500 text-xs italic mb-2">{formError}</p>}
+      <button className="bg-primary rounded-full px-3 py-2 text-white flex items-center gap-1 w-full justify-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

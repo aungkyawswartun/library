@@ -38,13 +38,13 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="search book..."
-            className="outline-none rounded-lg px-2 py-1"
+            className={`outline-none rounded-full px-2 py-1 bg-transparent border border-gray-300`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <button
             onClick={searchHandler}
-            className="bg-primary rounded-2xl px-3 py-2 text-white flex items-center gap-1"
+            className="bg-primary rounded-full px-3 py-2 text-white flex items-center gap-1"
           >
             <span className="hidden md:block">Search</span>
           </button>
@@ -75,7 +75,7 @@ export default function Navbar() {
         <li className="flex items-center gap-3">
           <Link
             to="/create"
-            className="bg-primary rounded-2xl px-3 py-2 text-white flex items-center gap-1"
+            className="bg-primary rounded-full px-3 py-2 text-white flex items-center gap-1"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
