@@ -46,6 +46,15 @@
         "book"
       ],
       "id": 5
+    },
+    {
+      "title": "title",
+      "description": "description",
+      "categories": [
+        "many",
+        "book"
+      ],
+      "id": 6
     }
   ]
 }

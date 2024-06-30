@@ -15,7 +15,7 @@ export default function Navbar() {
   let { theme, changeTheme, isDark } = useTheme();
   return (
     <nav
-      className={`border border-b-1 ${
+      className={`border border-b-1 border-t-0 border-x-0 ${
         isDark ? "bg-dbg border-primary text-white" : "bg-white"
       }`}
     >
